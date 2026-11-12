@@ -51,7 +51,7 @@ open `http://localhost:3000` (or set `PORT`).
 
 ## Workspace
 
-- Use **Layout** for one chart or grids of two, four, six, or eight. Click a pane to set its symbol and timeframe. Drag a divider to resize the grid.
+- Use **Layout** for one chart or grids of two, four, six, or eight. Click a pane to set its symbol and timeframe. Drag a divider to resize the grid. Choose **Layout → Reset layout** to restore equal chart sizes for the current layout.
 - Type on a chart to open symbol search, or enter digits to open the timeframe dialog. Enter the duration in minutes. For example, `120` selects `2h`.
 - Use **+** to open a workspace tab. Double-click a tab name to rename it. The browser saves each pane’s symbol, timeframe, scale, position, zoom, and drawings. It also saves workspace layouts, the time zone, theme, and candle colors.
 - The browser tab shows the active pane’s ticker, live TradingView price and percentage change, and the workspace name.

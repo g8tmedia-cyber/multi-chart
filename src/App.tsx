@@ -1,6 +1,6 @@
 import {
   ChartCandlestick, Crosshair, Ellipsis, Minus, Moon, MoveUpRight,
-  Plus, Search, Settings2, Square, Sun, X,
+  Plus, RotateCcw, Search, Settings2, Square, Sun, X,
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react';
 import { sameChartView } from '@/components/charts/useChartActionObserver';
@@ -189,6 +189,14 @@ export default function App() {
     setPopup(null);
   }
 
+  function resetLayoutSizes() {
+    updateTab(workspace.id, (tab) => ({
+      ...tab,
+      sizes: Object.fromEntries(Object.entries(tab.sizes).filter(([key]) => !key.startsWith(`${tab.layout}:`))),
+    }));
+    setPopup(null);
+  }
+
   function pickSymbol(symbol: string) {
     updatePane(workspace.id, workspace.active, (pane) => pane.symbol === symbol ? pane : { ...pane, symbol });
     setDialog(null);
@@ -263,6 +271,11 @@ export default function App() {
               {(Object.keys(MARKET_LAYOUTS) as MarketLayout[]).map((layout) => <button key={layout} className="layout-choice" aria-pressed={workspace.layout === layout} onClick={() => pickLayout(layout)}>
                 <MarketLayoutIcon layout={layout} /><span>{LAYOUT_NAMES[layout]}</span>
               </button>)}
+            </div>
+            <div className="layout-actions">
+              <button className="menu-item" onClick={resetLayoutSizes} title="Restore equal chart widths and heights">
+                <span>Reset layout</span><RotateCcw size={15} aria-hidden="true" />
+              </button>
             </div>
           </Popup>
         </div>

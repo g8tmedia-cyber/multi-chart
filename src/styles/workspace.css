@@ -119,6 +119,7 @@ button, select { -webkit-tap-highlight-color: transparent; }
 .layout-choice { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; height: 62px; padding: 3px; border: 1px solid transparent; border-radius: 5px; color: hsl(var(--muted-foreground)); font-size: 10px; }
 .layout-choice:hover { background: var(--hover); color: hsl(var(--foreground)); }
 .layout-choice[aria-pressed='true'] { color: var(--accent); background: var(--accent-bg); border-color: var(--accent-border); }
+.layout-actions { border-top: 1px solid hsl(var(--border)); margin-top: 6px; padding-top: 4px; }
 
 .workspace-panel { flex: 1 1 0; min-height: 0; min-width: 0; display: flex; }
 .drawing-toolbar { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 0 0 52px; padding: 10px 0; border-right: 1px solid hsl(var(--border)); background: var(--shell); }

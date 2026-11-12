@@ -55,7 +55,7 @@ open `http://localhost:3000` (or set `PORT`).
 - Type on a chart to open symbol search, or enter digits to open the timeframe dialog. Enter the duration in minutes. For example, `120` selects `2h`.
 - Use **+** to open a workspace tab. Double-click a tab name to rename it. The browser saves each pane’s symbol, timeframe, scale, position, zoom, and drawings. It also saves workspace layouts, the time zone, theme, and candle colors.
 - The browser tab shows the active pane’s ticker, live TradingView price and percentage change, and the workspace name.
-- Drag the chart to pan, scroll or pinch to zoom, and drag either axis to adjust its scale. Hover near the lower center to reveal the navigation controls. Press **Alt+R** to reset the active chart view. **Log** and **Auto** control the price scale.
+- Drag the chart to pan, scroll or pinch to zoom, and drag either axis to adjust its scale. Hover near the lower center to reveal the navigation controls. On touch screens, tap the chart to reveal them; they hide after 2.5 seconds of inactivity. Press **Alt+R** to reset the active chart view. **Log** and **Auto** control the price scale.
 - With **Auto** on, dragging the plot pans through time and candles fit below the chart labels. Turn **Auto** off or adjust either axis directly to enable vertical panning.
 - The countdown under the last price shows the time remaining in the current candle when the TradingView feed supplies its session hours.
 - Use the drawing toolbar for a horizontal ray, trend line, or rectangle. Drawings stay on the same symbol and pane across timeframes. Select a drawing and press **Delete** or use its trash button.

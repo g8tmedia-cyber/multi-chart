@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import type { ChartControlsContext } from './chart-contracts';
 
 const hoverMargin = 32;
+const touchHideDelay = 2500;
 
 export default function ChartNavigation({ pan, zoom, reset }: Pick<ChartControlsContext, 'pan' | 'zoom' | 'reset'>) {
   const ref = useRef<HTMLDivElement>(null);
@@ -11,6 +12,8 @@ export default function ChartNavigation({ pan, zoom, reset }: Pick<ChartControls
     const navigation = ref.current;
     const plot = navigation?.closest<HTMLElement>('[data-chart-plot]');
     if (!navigation || !plot) return;
+    let touchTimer: ReturnType<typeof setTimeout> | undefined;
+    const touches = new Set<number>();
 
     // Observe the plot directly so the reveal area never intercepts chart gestures.
     const trackPointer = ({ clientX, clientY, pointerType }: PointerEvent) => {
@@ -20,17 +23,43 @@ export default function ChartNavigation({ pan, zoom, reset }: Pick<ChartControls
         clientY >= top - hoverMargin && clientY <= bottom + hoverMargin;
       navigation.toggleAttribute('data-pointer-near', near);
     };
-    const hide = () => navigation.removeAttribute('data-pointer-near');
+    const hideHover = ({ pointerType }: PointerEvent) => {
+      if (pointerType !== 'touch') navigation.removeAttribute('data-pointer-near');
+    };
+    const showTouch = ({ pointerType, pointerId }: PointerEvent) => {
+      if (pointerType !== 'touch') return;
+      touches.add(pointerId);
+      clearTimeout(touchTimer);
+      navigation.setAttribute('data-touch-visible', '');
+    };
+    const endTouch = ({ pointerType, pointerId }: PointerEvent) => {
+      if (pointerType !== 'touch') return;
+      touches.delete(pointerId);
+      if (touches.size) return;
+      clearTimeout(touchTimer);
+      touchTimer = setTimeout(() => navigation.removeAttribute('data-touch-visible'), touchHideDelay);
+    };
+    const hide = () => {
+      clearTimeout(touchTimer);
+      touches.clear();
+      navigation.removeAttribute('data-pointer-near');
+      navigation.removeAttribute('data-touch-visible');
+    };
 
     plot.addEventListener('pointerenter', trackPointer, { passive: true });
     plot.addEventListener('pointermove', trackPointer, { passive: true });
-    plot.addEventListener('pointerleave', hide);
+    plot.addEventListener('pointerdown', showTouch, { passive: true });
+    plot.addEventListener('pointerup', endTouch, { passive: true });
+    plot.addEventListener('pointerleave', hideHover);
     plot.addEventListener('pointercancel', hide);
     return () => {
       plot.removeEventListener('pointerenter', trackPointer);
       plot.removeEventListener('pointermove', trackPointer);
-      plot.removeEventListener('pointerleave', hide);
+      plot.removeEventListener('pointerdown', showTouch);
+      plot.removeEventListener('pointerup', endTouch);
+      plot.removeEventListener('pointerleave', hideHover);
       plot.removeEventListener('pointercancel', hide);
+      hide();
     };
   }, []);
 

@@ -165,10 +165,8 @@ button, select { -webkit-tap-highlight-color: transparent; }
 
 .chart-navigation, .chart-scale { position: absolute; display: flex; align-items: center; z-index: 2; }
 .chart-navigation { bottom: 42px; left: calc((100% - 78px) / 2); transform: translateX(-50%); padding: 2px; gap: 1px; border: 1px solid hsl(var(--border)); border-radius: 7px; background: var(--shell); }
-@media (hover: hover) {
-  .chart-navigation { opacity: 0; pointer-events: none; transition: opacity 150ms ease; }
-  .chart-navigation[data-pointer-near], .chart-navigation:has(:focus-visible) { opacity: 1; pointer-events: auto; }
-}
+.chart-navigation { opacity: 0; pointer-events: none; transition: opacity 150ms ease; }
+.chart-navigation[data-pointer-near], .chart-navigation[data-touch-visible], .chart-navigation:has(:focus-visible) { opacity: 1; pointer-events: auto; }
 .chart-navigation button, .chart-scale button { display: grid; place-items: center; color: hsl(var(--muted-foreground)); padding: 0; width: 28px; height: 25px; border-radius: 4px; }
 .chart-navigation button:hover, .chart-scale button:hover { background: var(--hover); color: hsl(var(--foreground)); }
 .chart-scale { bottom: 5px; right: 5px; gap: 2px; }

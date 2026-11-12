@@ -9,6 +9,18 @@ npm.cmd run dev
 
 Open the local URL printed by Vite. To check the production build, run `npm.cmd run build`, then `npm.cmd run preview`. Both commands serve the local TradingView adapter.
 
+## Railway hosting
+
+Connect this repository to a Railway service using the `main` branch. The checked-in
+`railway.json` runs `npm run build`, starts the production server with `npm start`,
+and checks `/healthz`. Use Node.js 22.22 or later. The server binds to
+`0.0.0.0` on Railway's `PORT` and serves both the built app and the TradingView API,
+including live event streams. No database or credentials are required. Generate
+a Railway domain to open the app. Pushes to the connected branch deploy updates.
+
+To run the same server locally, use `npm run build` followed by `npm start`, then
+open `http://localhost:3000` (or set `PORT`).
+
 ## Workspace
 
 - Use **Layout** for one chart or grids of two, four, six, or eight. Click a pane to set its symbol and timeframe. Drag a divider to resize the grid.

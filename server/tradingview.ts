@@ -394,7 +394,7 @@ function json(response: ServerResponse, status: number, data: unknown) {
   response.end(JSON.stringify(data));
 }
 
-export function tradingViewApi(): Plugin {
+export function createTradingViewApi() {
   const chartsPerSocket = 8;
   const livePools = Array.from({ length: 2 }, () => ({ sessions: new GuestSessions(chartsPerSocket), channels: 0 }));
   const liveCapacity = chartsPerSocket * livePools.length;
@@ -544,6 +544,11 @@ export function tradingViewApi(): Plugin {
     historySessions.stop();
   }
 
+  return { middleware, stop };
+}
+
+export function tradingViewApi(): Plugin {
+  const { middleware, stop } = createTradingViewApi();
   return {
     name: 'local-tradingview-guest',
     configureServer(server) {

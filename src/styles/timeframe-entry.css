@@ -1,0 +1,7 @@
+.modal.timeframe-modal { width: min(370px, calc(100% - 24px)); }
+.timeframe-modal .symbol-search > span { font-size: 12px; }
+.timeframe-hint { margin: 10px 18px; color: hsl(var(--muted-foreground)); font-size: 12px; }
+.timeframe-choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 0 18px 18px; }
+.timeframe-choices .control { display: flex; justify-content: space-between; min-width: 0; }
+.timeframe-choices .control[aria-current='true'] { background: var(--hover); }
+.timeframe-choices small { color: hsl(var(--muted-foreground)); }

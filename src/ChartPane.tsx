@@ -78,7 +78,7 @@ export default function ChartPane({ pane, active, maximized, canMaximize, tool, 
   );
 
   return (
-    <section className="chart-pane" data-active={active} aria-label={`${symbol} ${interval} chart`}
+    <section className="chart-pane" data-active={active} data-drawing-tool={tool} aria-label={`${symbol} ${interval} chart`}
       onPointerDownCapture={onActivate} onFocusCapture={onActivate}>
       <div className="pane-body">
         {feed.candles.length > 0 && <ChartSurface key={feed.windowId} pane={pane} feed={feed} active={active}

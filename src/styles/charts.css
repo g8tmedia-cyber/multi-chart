@@ -105,3 +105,15 @@
 @media (max-width: 639px) {
   .market-grid { min-height: calc(var(--market-row-count) * 285px); }
 }
+
+@media (pointer: coarse) {
+  /* Let the browser scroll stacked charts; pointercancel rolls back chart pans.
+     Drawing tools and single/maximized charts retain their full touch gestures. */
+  .market-grid:not([data-market-layout='single'])[data-market-maximized='false']
+    .chart-pane[data-drawing-tool='select'] [data-chart-canvas] {
+    touch-action: pan-y;
+  }
+
+  /* Editing an existing drawing still owns the gesture that starts on it. */
+  .market-grid [data-annotation-id] { touch-action: none; }
+}

@@ -15,20 +15,28 @@
 }
 
 [data-chart-ohlc] {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
+  width: max-content;
   max-width: 100%;
   min-width: 0;
-  gap: 4px 9px;
+  overflow: hidden;
+  --ohlc-gap: 9px;
   white-space: nowrap;
   color: hsl(var(--muted-foreground));
   font-family: var(--font-mono, monospace);
   font-size: 10px;
+  line-height: 14px;
   font-variant-numeric: tabular-nums;
 }
 
-[data-chart-ohlc] > span { flex: 0 0 auto; }
+[data-chart-ohlc-values] {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  gap: var(--ohlc-gap);
+  transform: scaleX(var(--ohlc-scale, 1));
+  transform-origin: left center;
+}
+[data-chart-ohlc-values] > span { flex: 0 0 auto; }
 [data-chart-direction="bullish"] { color: hsl(var(--chart-bullish)); }
 [data-chart-direction="bearish"] { color: hsl(var(--chart-bearish)); }
 

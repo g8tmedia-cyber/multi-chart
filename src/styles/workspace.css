@@ -153,7 +153,7 @@ button, select { -webkit-tap-highlight-color: transparent; }
   .pane-identity, .pane-market { gap: 5px; }
   .pane-market strong { font-size: 12px; }
   .pane-market .asset-icon { width: 20px; height: 20px; }
-  [data-chart-ohlc] { gap: 3px 6px; }
+  [data-chart-ohlc] { --ohlc-gap: 6px; }
 }
 .pane-empty { display: flex; align-items: center; justify-content: center; gap: 10px; flex-direction: column; flex: 1; text-align: center; padding: 12px; color: hsl(var(--muted-foreground)); }
 .pane-empty strong { color: hsl(var(--foreground)); }

@@ -6,7 +6,7 @@
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  background: hsl(var(--card));
+  background: var(--card);
 }
 
 .research-chart[data-chart-frame="card"] {
@@ -60,7 +60,7 @@
 }
 
 [data-chart-canvas]:focus-visible {
-  outline: 2px solid hsl(var(--ring));
+  outline: 2px solid var(--accent);
   outline-offset: -2px;
 }
 
@@ -103,8 +103,8 @@
 .market-grid-cell[hidden] { display: none; }
 .market-divider { position: absolute; z-index: 10; touch-action: none; outline: none; }
 .market-divider::after { position: absolute; content: ''; background: hsl(var(--border)); }
-.market-divider:hover::after, .market-divider:focus-visible::after { background: hsl(var(--primary)); }
-.market-divider:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: -2px; }
+.market-divider:hover::after, .market-divider:focus-visible::after { background: var(--accent); }
+.market-divider:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
 .market-divider-column { top: 0; bottom: 0; width: 10px; transform: translateX(-50%); cursor: col-resize; }
 .market-divider-column::after { top: 0; bottom: 0; left: 4px; width: 2px; }
 .market-divider-row { left: 0; right: 0; height: 10px; transform: translateY(-50%); cursor: row-resize; }

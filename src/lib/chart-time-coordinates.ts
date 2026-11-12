@@ -43,7 +43,7 @@ export function timeToCandleIndex(
   return i + (time - candles[i].time) / (candles[i + 1].time - candles[i].time);
 }
 export function candleIndexToTime(
-  candles: Candle[],
+  candles: readonly Candle[],
   interval: Interval,
   index: number,
 ): number {

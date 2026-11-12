@@ -1,5 +1,6 @@
 import type { Candle, Interval } from '@/lib/trading-types';
 import type { ChartRange } from '@/lib/chart-geometry';
+import { candleIndexToTime } from '@/lib/chart-time-coordinates';
 import { isChartTimeZone } from '@/lib/chart-timezones';
 
 export const TIME_AXIS_LABEL_GAP = 14;
@@ -176,7 +177,7 @@ function significance(
  * prioritize calendar boundaries, then admit lower-weight ticks only when they fit.
  * Reference: tradingview/lightweight-charts src/model/tick-marks.ts at
  * efa9bd49e8116a33cb0c1dee61c5bef74b8d0dea. No library code is imported/copied.
- * Candidates use revealed candle timestamps only, never prefetched/future OHLC.
+ * Beyond the last candle, candidates follow the same time grid as the crosshair.
  */
 export function chartTimeTicks({
   candles,
@@ -196,7 +197,7 @@ export function chartTimeTicks({
   )
     return [];
   const first = Math.max(0, Math.ceil(range.right - range.count));
-  const last = Math.min(candles.length - 1, Math.floor(range.right));
+  const last = Math.floor(range.right);
   if (first > last) return [];
   const zone = isChartTimeZone(timeZone) ? timeZone : 'UTC';
   const calendar = calendarFor(zone),
@@ -218,11 +219,11 @@ export function chartTimeTicks({
     widths.set(label, result);
     return result;
   };
-  let previous =
-    first > 0 ? cachedLocalTime(candles[first - 1].time, calendar) : null;
+  const timeAt = (index: number) => candles[index]?.time ?? candleIndexToTime(candles, interval, index);
+  let previous = first > 0 ? cachedLocalTime(timeAt(first - 1), calendar) : null;
   const candidates: ChartTimeTick[] = [];
   for (let index = first; index <= last; index++) {
-    const time = candles[index].time,
+    const time = timeAt(index),
       current = cachedLocalTime(time, calendar);
     if (!current) continue;
     const importance = significance(current, previous, interval);

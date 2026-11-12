@@ -12,6 +12,7 @@ import { supportedChartTimeZones } from '@/lib/chart-timezones';
 import { MARKET_LAYOUTS, type MarketLayout } from '@/lib/markets-workspace';
 import type { Interval } from '@/lib/trading-types';
 import ChartPane from './ChartPane';
+import BrowserTabTitle from './BrowserTabTitle';
 import { Appearance, Modal, Popup, TimeframeSearch, TradingViewSearch } from './menus';
 import { chartViewKey, LAYOUT_NAMES, newWorkspace, readWorkspace, writeWorkspace, type AppState, type Pane, type Workspace } from './workspace';
 
@@ -207,6 +208,7 @@ export default function App() {
 
   return (
     <div className="app" data-theme={state.theme} style={palette}>
+      <BrowserTabTitle key={active.symbol} symbol={active.symbol} workspace={workspace.name} />
       <header className="titlebar">
         <div className="brand"><span className="brand-mark"><ChartCandlestick size={21} strokeWidth={1.9} /></span><h1>Multi Chart</h1></div>
         <div className="tabs" role="tablist" aria-label="Chart workspaces">

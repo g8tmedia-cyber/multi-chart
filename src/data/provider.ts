@@ -3,6 +3,7 @@ import type { Candle } from '@/lib/trading-types';
 export type Connection = 'connecting' | 'live' | 'updating' | 'reconnecting' | 'delayed' | 'offline';
 export type HistoryBoundary = 'end' | 'limit';
 export type CandleClose = { time: number; closeAt: number };
+export type MarketQuote = { price: number; changePercent?: number };
 export type CandlePage = { candles: Candle[]; hasEarlier: boolean; hasLater?: boolean; terminalReason?: HistoryBoundary; candleClose?: CandleClose };
 export type PageOptions = { before?: number; from?: number; limit?: number };
 export type StreamStatus = {

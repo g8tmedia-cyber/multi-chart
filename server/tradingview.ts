@@ -1,8 +1,8 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { searchMarkets, TradingViewClient, TradingViewError, type ChartSession, type SymbolInfo } from '@mathieuc/tradingview';
+import { searchMarkets, watchQuotes, TradingViewClient, TradingViewError, type ChartSession, type SymbolInfo } from '@mathieuc/tradingview';
 import type { Plugin } from 'vite';
 import { duration, type Candle, type Interval } from '../src/lib/trading-types';
-import type { CandleClose, CandlePage, PageOptions, StreamStatus } from '../src/data/provider';
+import type { CandleClose, CandlePage, MarketQuote, PageOptions, StreamStatus } from '../src/data/provider';
 import { isTradingViewSymbol, TRADINGVIEW_INTERVALS, tradingViewTimeframe, type TradingViewSymbol } from '../src/data/tradingview-shared';
 import { tradingViewCandleClose } from './tradingview-session';
 
@@ -406,10 +406,51 @@ export function tradingViewApi(): Plugin {
   let nextSearch = 0;
   let searchCooldown = 0;
 
+  function beginStream(response: ServerResponse, retry: number) {
+    response.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', Connection: 'keep-alive' });
+    response.write(`retry: ${retry}\n\n`);
+    streamResponses.add(response);
+    send(response, 'heartbeat', {});
+    const heartbeat = setInterval(() => send(response, 'heartbeat', {}), 15_000);
+    heartbeat.unref();
+    response.once('close', () => {
+      streamResponses.delete(response);
+      clearInterval(heartbeat);
+    });
+  }
+
+  async function streamQuote(symbol: string, response: ServerResponse) {
+    const controller = new AbortController();
+    response.once('close', () => controller.abort());
+    beginStream(response, 5000);
+    try {
+      const watcher = await watchQuotes({ symbols: [symbol], fields: ['lp', 'chp'], signal: controller.signal }, {
+        onData(_symbol, { lp, chp }) {
+          if (typeof lp !== 'number' || !Number.isFinite(lp)) return;
+          const quote: MarketQuote = { price: lp, changePercent: typeof chp === 'number' && Number.isFinite(chp) ? chp : undefined };
+          send(response, 'quote', quote);
+        },
+      });
+      await watcher.closed;
+    } catch (error) {
+      if (error instanceof TradingViewError && error.code === 'QUOTE_ERROR') {
+        send(response, 'unavailable', {});
+      }
+    } finally {
+      if (!response.destroyed && !response.writableEnded) response.end();
+    }
+  }
+
   async function handle(request: IncomingMessage, response: ServerResponse) {
     if (request.method !== 'GET') { json(response, 405, { error: 'Method not allowed.' }); return; }
     try {
       const url = new URL(request.url ?? '/', 'http://localhost');
+      if (url.pathname === '/quote') {
+        const symbol = url.searchParams.get('symbol') ?? '';
+        if (!isTradingViewSymbol(symbol)) throw new GuestError('Choose an exchange-qualified TradingView symbol.', 400);
+        await streamQuote(symbol, response);
+        return;
+      }
       if (url.pathname === '/search') {
         const query = (url.searchParams.get('q') ?? '').trim();
         if (!query || query.length > 80 || /[\x00-\x1f\x7f]/.test(query)) {
@@ -471,12 +512,7 @@ export function tradingViewApi(): Plugin {
           throw new GuestError('TradingView guest streams are busy.', 429);
         }
       }
-      response.writeHead(200, { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache, no-transform', Connection: 'keep-alive' });
-      response.write('retry: 2000\n\n');
-      streamResponses.add(response);
-      send(response, 'heartbeat', {});
-      const heartbeat = setInterval(() => send(response, 'heartbeat', {}), 15_000);
-      heartbeat.unref();
+      beginStream(response, 2000);
       const cleanups = requested.map(({ id, market }) => {
         const key = keyFor(market);
         let channel = streams.get(key);
@@ -492,8 +528,6 @@ export function tradingViewApi(): Plugin {
         return channel.attach((event, value) => send(response, event, id ? { market: id, value } : value));
       });
       response.once('close', () => {
-        streamResponses.delete(response);
-        clearInterval(heartbeat);
         for (const cleanup of cleanups) cleanup();
       });
     } catch (error) {

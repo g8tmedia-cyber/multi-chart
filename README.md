@@ -9,6 +9,34 @@ npm.cmd run dev
 
 Open the local URL printed by Vite. To check the production build, run `npm.cmd run build`, then `npm.cmd run preview`. Both commands serve the local TradingView adapter.
 
+## GoDaddy Node.js Hosting
+
+This app follows [GoDaddy's ZIP upload instructions](https://www.godaddy.com/en-ph/help/upload-my-ai-generated-app-to-nodejs-hosting-42987).
+Use the `godaddy-deployment` branch for these changes.
+
+Run `npm ci`, then `npm run package:godaddy` (requires Python 3 for ZIP creation).
+Upload **`artifacts/multi-chart-godaddy.zip`** at
+[GoDaddy Node.js Hosting](https://www.godaddy.com/nodejs) using **Upload ZIP → Deploy**.
+Open the private preview URL to check the app and live charts. Publishing and domain
+options depend on your GoDaddy account's hosting entitlement.
+
+The ZIP contains the compiled frontend and TradingView server, with `package.json`
+at its root. It excludes `node_modules`, Git metadata, caches, local environment
+files, and development tools. GoDaddy installs the two server dependencies;
+`npm run build` checks the compiled server and `npm start` runs it. Rebuild and
+upload a new ZIP after changing the source. Do not upload only `dist`: the chart
+feed requires the included server.
+
+For a GitHub source deployment, select this branch. The source manifest includes
+`name`, `version`, `main`, and real `build`/`start` scripts. Build tools are in
+`dependencies` because GoDaddy's documented install may omit development packages.
+The production server binds to `0.0.0.0:$PORT`; Vite development and preview servers
+also respect `PORT`. No database, API key, or other secret is required.
+
+Verify `/healthz`, symbol search, candle history, and live updates on GoDaddy.
+The guest TradingView connection requires outbound HTTPS and WebSocket access;
+preview success for the UI alone does not verify that feed access works.
+
 ## Railway hosting
 
 Connect this repository to a Railway service using the `main` branch. The checked-in
